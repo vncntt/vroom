@@ -1,13 +1,19 @@
 import React, { useLayoutEffect } from 'react'
-import { ViewBase,Text} from 'react-native'
+import { View ,Text} from 'react-native'
 import {auth} from '../firebase'
-//import {AntDesign} from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import {AntDesign} from '@expo/vector-icons';
 const chatScreen = ({navigation}) => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
             headerRight:() => (
+                <TouchableOpacity style={{
+                    marginRight: 30
+                    
+                }}onPress={signOut}>
                 <AntDesign name="logout" size={24} color = "black"/>
+                </TouchableOpacity>
             )
         })
     })
