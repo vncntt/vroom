@@ -13,6 +13,7 @@ const loginScreen = ({ navigation }) => {
                 // Signed in
                 var user = userCredential.user;
                 // ...
+                navigation.navigate('Chat')
             })
             .catch((error) => {
                 var errorMessage = error.message;
