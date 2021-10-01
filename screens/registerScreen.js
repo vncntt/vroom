@@ -30,7 +30,7 @@ const registerScreen = ({navigation}) => {
 
         );
         navigation.navigate('Chat')
-
+        
     }
 
     return (

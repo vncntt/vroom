@@ -5,8 +5,11 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { AntDesign } from '@expo/vector-icons';
 import { GiftedChat } from 'react-native-gifted-chat';
 const chatScreen = ({ navigation }) => {
+
+    
+
     const [messages, setMessages] = useState([]);
-    /*useEffect(() => {
+        useEffect(() => {
         setMessages([
             {
                 _id: 1,
@@ -19,11 +22,10 @@ const chatScreen = ({ navigation }) => {
                 },
             },
         ])
-    }, [])*/
-
+    }, [])
+    /*
     useLayoutEffect(() => {
-        const unsubscribe = db.collection('chats').orderBy('createdAt','desc')
-        .onSnapsnot(snapshot=>setMessages(
+        const unsubscribe = db.collection('chats').orderBy('createdAt','desc').onSnapsnot(snapshot=>setMessages(
             snapshot.docs.map(doc => ({
                 _id : doc.data()._id,
                 createdAt: docs.data().createdAt.toDate(),
@@ -34,8 +36,8 @@ const chatScreen = ({ navigation }) => {
         return unsubscribe;
 
     },[])
+    */
     
-
     const onSend = useCallback((messages = []) => {
         setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
         const {
@@ -59,7 +61,6 @@ const chatScreen = ({ navigation }) => {
             headerRight: () => (
                 <TouchableOpacity style={{
                     marginRight: 30
-
                 }} onPress={signOut}>
                     <AntDesign name="logout" size={24} color="black" />
                 </TouchableOpacity>
@@ -83,11 +84,11 @@ const chatScreen = ({ navigation }) => {
             onSend={messages => onSend(messages)}
             user={{
                 _id: auth?.currentUser?.email,
-                name: auth?.currentUser?.email
+                name: auth?.currentUser?.email,
+                avatar: auth?.currentUser?.photoURL
             }}
         />
     )
-
 }
 
 export default chatScreen

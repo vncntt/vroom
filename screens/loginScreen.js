@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native'
 import { Input, Button } from 'react-native-elements'
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const loginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -20,18 +21,31 @@ const loginScreen = ({ navigation }) => {
                 alert(errorMessage);
             });
     }
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged;
+    useEffect(() =>{
+        const unsubscribe = auth.onAuthStateChanged
         (function (user) {
-            if (user) {
+            if (user){
                 navigation.replace('Chat');
-            } else {
+            }else{
 
             }
-        });
+        })
         return unsubscribe;
-
-    }, [])
+    },[]);
+    /*useEffect(() => {
+        const loginAuth = getAuth();
+        const unsubscribe = auth.onAuthStateChanged(loginAuth, user=>{
+                if (user) {
+                    navigation.replace('Chat');
+                    console.log('user exists');
+                } else {
+                    console.log('user failed');
+                }
+        });
+        
+        return unsubscribe;
+        
+    }, [])*/
     return (
 
         <View style={styles.container}>
