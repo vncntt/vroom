@@ -4,12 +4,65 @@ import { auth, db } from '../firebase'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { AntDesign } from '@expo/vector-icons';
 import { GiftedChat } from 'react-native-gifted-chat';
-const chatScreen = ({ navigation }) => {
-
-    
+ const chatScreen = ({ navigation }) => {
 
     const [messages, setMessages] = useState([]);
-        useEffect(() => {
+
+    useEffect(() => {
+        let subscriber;
+        (async () => {
+          await firebase
+            .auth()
+            .signInWithEmailAndPassword(TEST_ACCOUNT, TEST_PASSWORD)
+            .catch(console.log);
+    
+          await firebase
+            .firestore()
+            .collection('chats')
+            .orderBy('createdAt')
+            .get()
+            .then((querySnapshot) => {
+              console.log('Total users: ', querySnapshot.size);
+    
+              const storedData = [];
+    
+              querySnapshot.forEach((documentSnapshot) => {
+                storedData.push({
+                  ...documentSnapshot.data(),
+                  createdAt: documentSnapshot.data().createdAt.toDate(),
+                });
+              });
+              setMessages(storedData);
+              console.log(storedData);
+            });
+            
+          
+        })();
+        subscriber = db
+        .collection('chats')
+        .orderBy('createdAt')
+        .onSnapshot((querySnapshot) => {
+          console.log('User size: ', querySnapshot.size);
+          const storedData = [];
+
+          querySnapshot.forEach((documentSnapshot) => {
+            storedData.push({
+              ...documentSnapshot.data(),
+              createdAt: documentSnapshot.data().createdAt.toDate(),
+            });
+          });
+          setMessages(storedData);
+        });
+        // Stop listening for updates when no longer required
+        return () => subscriber();
+      }, []);
+
+
+
+
+
+
+        /*useEffect(() => {
         setMessages([
             {
                 _id: 1,
@@ -22,9 +75,9 @@ const chatScreen = ({ navigation }) => {
                 },
             },
         ])
-    }, [])
-    /*
-    useLayoutEffect(() => {
+    }, [])*/
+    
+    /*useLayoutEffect(() => {
         const unsubscribe = db.collection('chats').orderBy('createdAt','desc').onSnapsnot(snapshot=>setMessages(
             snapshot.docs.map(doc => ({
                 _id : doc.data()._id,
@@ -35,8 +88,8 @@ const chatScreen = ({ navigation }) => {
         ))
         return unsubscribe;
 
-    },[])
-    */
+    },[])*/
+    
     
     const onSend = useCallback((messages = []) => {
         setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
@@ -90,5 +143,4 @@ const chatScreen = ({ navigation }) => {
         />
     )
 }
-
-export default chatScreen
+export default chatScreen;
