@@ -11,6 +11,7 @@ const loginScreen = ({ navigation }) => {
     const signIn = () => {
         auth.signInWithEmailAndPassword(email, password)
             .then((userCredential) => {
+                console.log(userCredential);
                 // Signed in
                 var user = userCredential.user;
                 // ...
@@ -25,27 +26,13 @@ const loginScreen = ({ navigation }) => {
         const unsubscribe = auth.onAuthStateChanged
         (function (user) {
             if (user){
-                navigation.replace('Chat');
             }else{
 
             }
         })
         return unsubscribe;
     },[]);
-    /*useEffect(() => {
-        const loginAuth = getAuth();
-        const unsubscribe = auth.onAuthStateChanged(loginAuth, user=>{
-                if (user) {
-                    navigation.replace('Chat');
-                    console.log('user exists');
-                } else {
-                    console.log('user failed');
-                }
-        });
-        
-        return unsubscribe;
-        
-    }, [])*/
+
     return (
 
         <View style={styles.container}>

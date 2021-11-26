@@ -1,4 +1,4 @@
-import * as firebase from 'firebase';
+import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 var firebaseConfig = {
@@ -18,4 +18,5 @@ if(firebase.apps.length === 0){
 }
 const db = app.firestore();
 const auth = firebase.auth();
-export{db, auth};
+const storage = app.storage;
+export{db, auth, storage};
