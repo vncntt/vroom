@@ -15,7 +15,8 @@ const loginScreen = ({ navigation }) => {
                 // Signed in
                 var user = userCredential.user;
                 // ...
-                navigation.navigate('Chat')
+                const uid = user.uid;
+                navigation.navigate('Chat', {uid})
             })
             .catch((error) => {
                 var errorMessage = error.message;

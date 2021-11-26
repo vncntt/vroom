@@ -1,6 +1,7 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/storage'
 var firebaseConfig = {
     apiKey: "AIzaSyCrd7Qw9-Zdr4BISIqYKbDR7q1XFwXd6C0",
     authDomain: "gifted-chat-2c23e.firebaseapp.com",
@@ -18,5 +19,5 @@ if(firebase.apps.length === 0){
 }
 const db = app.firestore();
 const auth = firebase.auth();
-const storage = app.storage;
+const storage = app.storage?.bind(app);
 export{db, auth, storage};

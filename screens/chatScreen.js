@@ -10,17 +10,20 @@ import { Actions, Bubble, GiftedChat, IMessage } from 'react-native-gifted-chat'
 
 const chatScreen = (props, navigation) => {
   const roomId = "2DKla8pPMjPs0zt1hQLl";
-  const collectionName = 'chats'
+  const collectionName = 'newChats'
   const [messages, setMessages] = useState([]);
   const [sound, setSound] = useState();
   const [recording, setRecording] = useState();
   const [active, setActive] = useState(false);
 
   useEffect(() => {
+    console.log(props);
     const chatRoom = db
-      .collection('chats')
+      .collection('newChats')
+      .doc("UOKQ1ev6e4ys89cRnV5k")
+      .collection("Room")
       .orderBy('createdAt', 'desc');
-
+      
     const HandleSnapshot = (querySnapshot) => {
       const storedData = [];
       querySnapshot.forEach((documentSnapshot) => {
@@ -35,9 +38,11 @@ const chatScreen = (props, navigation) => {
     (async () => {
       await chatRoom.get().then(HandleSnapshot);
     })();
+
+    /*
     (async () => {
       await db
-        .collection('chats')
+        .collection('newChats')
         .orderBy('createdAt', 'desc')
         .get()
         .then((querySnapshot) => {
@@ -52,7 +57,9 @@ const chatScreen = (props, navigation) => {
           setMessages(storedData);
           console.log(storedData);
         });
-    })();
+    })();*/
+
+
     return () => subscriber();
 
   }, []);
@@ -128,18 +135,16 @@ const chatScreen = (props, navigation) => {
   const stopRecording = async () => {
     setRecording(undefined);
     await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
-    //const filename = await uploadAudio();
-    //const downloadURI = await storage().ref(filename).getDownloadURL();
-    return;
+    const auri = recording.getURI();
+    const filename = await uploadAudio();
+    const downloadURI = await storage().ref(filename).getDownloadURL();
     console.log(filename);
     
     const message = {
       _id: uuidv4(),
       createdAt: new Date(),
       user: {
-        _id: user.uid,
-        name: user.email,
+        _id: props.route.params.uid
       },
       text: "",
       audio: downloadURI,
@@ -148,8 +153,8 @@ const chatScreen = (props, navigation) => {
     //console.log(message);
 
     await db
-      .collection(collectionName)
-      .doc(roomId)
+      .collection("newChats")
+      .doc("UOKQ1ev6e4ys89cRnV5k")
       .collection("Room")
       .add(message)
       .then(() => console.log("User added"))
@@ -169,7 +174,8 @@ const chatScreen = (props, navigation) => {
     );
   };
 
-  const renderAudio = () => {
+  const renderAudio = (props) => {
+    console.log(props.currentMessage)
     return !props.currentMessage?.audio ? (
       <View>
 
@@ -179,10 +185,9 @@ const chatScreen = (props, navigation) => {
         <Ionicons
           name="ios-play"
           size={35}
-          color={artive ? "green" : "red"}
+          color={active ? "green" : "red"}
           onPress={async () => {
-            const downloadURI = await db
-              .storage()
+            const downloadURI = await storage()
               .refFromURL(props.currentMessage.audio)
               .getDownloadURL();
             const soundObject = new Audio.Sound();
@@ -190,8 +195,8 @@ const chatScreen = (props, navigation) => {
               .loadAsync({ uri: downloadURI })
               .catch(console.log);
             setSound(soundObject);
-            soundObject.setOnPlaybackStatusUpdate(() => {
-              console.log("status")
+            soundObject.setOnPlaybackStatusUpdate((status) => {
+              console.log(status)
               if (status.isPlaying === true) {
                 setActive(true);
               } else {
@@ -206,77 +211,21 @@ const chatScreen = (props, navigation) => {
     );
   };
 
-
   const onSend = useCallback((messages = []) => {
-    setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
-    const { _id, createdAt, text, user } = messages[0]
-    db.collection('chats').add({
-      _id,
-      createdAt,
-      text,
-      user
-    })
-  }, [])
-
-  /*
-    const onSend = useCallback((messages = []) => {
-      messages.forEach((data) => {
-        db
-          .collection('chats')
-          .add(data)
-          .then(() => console.log("User added"));
-      });
-  
-      setMessages((previousMessages) =>
-        GiftedChat.append(previousMessages, messages)
-      );
-    }, []);
-    */
-  /*
-  subscriber = db
-  .collection('chats')
-  .orderBy('createdAt', 'desc')
-  .onSnapshot((querySnapshot) => {
-    console.log('User size: ', querySnapshot.size);
-    const storedData = [];
-
-    querySnapshot.forEach((documentSnapshot) => {
-      storedData.push({
-        ...documentSnapshot.data(),
-        createdAt: documentSnapshot.data().createdAt.toDate(),
-      });
+    console.log(messages);
+    messages.forEach((data) => {
+      db
+        .collection("newChats")
+        .doc("UOKQ1ev6e4ys89cRnV5k")
+        .collection("Room")
+        .add(data)
+        .then(() => console.log("User added"));
     });
-    setMessages(storedData);
-  });
-  // Stop listening for updates when no longer required
-  return () => subscriber();
-}, []);   
- 
-const onSend = useCallback((messages = []) => {
-  setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
-  const {_id, createdAt,text, user }=messages[0]
-  db.collection('chats').add({
-      _id,
-      createdAt,
-      text,
-      user
-  })
-}, [])
-*/
-
-  /*
-  useLayoutEffect(() => {
-      navigation.setOptions({
-          headerRight: () => (
-              <TouchableOpacity style={{
-                  marginRight: 30
-              }} onPress={signOut}>
-                  <AntDesign name="logout" size={24} color="black" />
-              </TouchableOpacity>
-          )
-      })
-  })
-  */
+    
+    setMessages((previousMessages) =>
+      GiftedChat.append(previousMessages, messages)
+    );
+  }, []);
 
 
   const signOut = () => {
@@ -305,7 +254,7 @@ const onSend = useCallback((messages = []) => {
       renderActions={renderActions}
       onSend={messages => onSend(messages)}
       user={{
-        _id: auth.uid,
+        _id: props.route.params.uid,
         name: auth?.currentUser?.email,
         avatar: auth?.currentUser?.photoURL
       }}
