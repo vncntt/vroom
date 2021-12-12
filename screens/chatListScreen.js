@@ -1,15 +1,29 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, Text } from 'react-native'
+import { Button } from 'react-native-elements/dist/buttons/Button'
+import { db } from '../firebase'
 
 
 
-
-const chatListScreen = ({navigation}) => {
-
-
+const chatListScreen = (props) => {
+    console.log(props.route.params.uid);
+    useEffect(()=>{
+        db
+        .collection("user_Chatroom")
+        .doc(props.route.params.uid)
+        .get()
+        .then((querySnapshot)=> {
+            const chatrooms = querySnapshot.data();
+            //console.log(chatrooms.Rooms[0].get());
+            chatrooms.Rooms[0].get().then((querySnapshot)=>{
+                console.log(querySnapshot.data());
+            });
+        })
+    })
+    
     return (
         <View>
-            Chat Room 1
+            <Text>hello world</Text>
         </View>
     )
 }
