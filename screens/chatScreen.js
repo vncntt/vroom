@@ -17,7 +17,7 @@ const chatScreen = (props, navigation) => {
   const [active, setActive] = useState(false);
 
   useEffect(() => {
-    console.log(props);
+    //console.log(props);
     const chatRoom = db
       .collection('newChats')
       .doc("UOKQ1ev6e4ys89cRnV5k")
@@ -204,6 +204,7 @@ const chatScreen = (props, navigation) => {
               }
             });
             console.log("Playing Sound");
+            const s = await soundObject.playAsync();
           }}
 
         />
