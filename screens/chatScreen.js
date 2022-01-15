@@ -1,16 +1,16 @@
 import React, { useLayoutEffect, useState, useEffect, useCallback } from 'react'
 import { View, Text, Alert, useParams } from 'react-native'
 import { auth, db, storage } from '../firebase'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity} from 'react-native-gesture-handler';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { v4 as uuidv4 } from 'uuid';
 import { Audio } from 'expo-av';
 import { Actions, Bubble, GiftedChat, IMessage } from 'react-native-gifted-chat';
 
 
-const chatScreen = (props, navigation) => {
-  const roomId = "2DKla8pPMjPs0zt1hQLl";
-  const collectionName = 'newChats'
+const chatScreen = (props, {navigation}) => {
+  const roomId = props.route.params.roomId;
+  const collectionName = 'newChats';
   const [messages, setMessages] = useState([]);
   const [sound, setSound] = useState();
   const [recording, setRecording] = useState();
@@ -20,7 +20,7 @@ const chatScreen = (props, navigation) => {
     //console.log(props);
     const chatRoom = db
       .collection('newChats')
-      .doc("UOKQ1ev6e4ys89cRnV5k")
+      .doc(roomId)
       .collection("Room")
       .orderBy('createdAt', 'desc');
       
@@ -154,7 +154,7 @@ const chatScreen = (props, navigation) => {
 
     await db
       .collection("newChats")
-      .doc("UOKQ1ev6e4ys89cRnV5k")
+      .doc(roomId)
       .collection("Room")
       .add(message)
       .then(() => console.log("User added"))
@@ -217,7 +217,7 @@ const chatScreen = (props, navigation) => {
     messages.forEach((data) => {
       db
         .collection("newChats")
-        .doc("UOKQ1ev6e4ys89cRnV5k")
+        .doc(roomId)
         .collection("Room")
         .add(data)
         .then(() => console.log("User added"));
