@@ -17,7 +17,6 @@ const chatScreen = (props, {navigation}) => {
   const [active, setActive] = useState(false);
 
   useEffect(() => {
-    //console.log(props);
     const chatRoom = db
       .collection('newChats')
       .doc(roomId)
@@ -38,28 +37,6 @@ const chatScreen = (props, {navigation}) => {
     (async () => {
       await chatRoom.get().then(HandleSnapshot);
     })();
-
-    /*
-    (async () => {
-      await db
-        .collection('newChats')
-        .orderBy('createdAt', 'desc')
-        .get()
-        .then((querySnapshot) => {
-          const storedData = [];
-          querySnapshot.forEach((documentSnapshot) => {
-            console.log(documentSnapshot.data());
-            storedData.push({
-              ...documentSnapshot.data(),
-              createdAt: documentSnapshot.data().createdAt.toDate(),
-            });
-          });
-          setMessages(storedData);
-          console.log(storedData);
-        });
-    })();*/
-
-
     return () => subscriber();
 
   }, []);

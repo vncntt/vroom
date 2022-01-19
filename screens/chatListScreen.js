@@ -35,18 +35,43 @@ const chatListScreen = (props) => {
     }, [])
     console.log(chatRooms);
     const uid = props.route.params.uid;
+    const createNewChatsDocument = ()=>{
+        db
+        .collection('newChats')
+        .add({
+            RoomName: props.route.params.username,
+        })
+    }
+    const createNewDocumentInUser = ()=>{
+        db
+        .collection('user_Chatroom')
+        .doc(uid)
+        .get()
+        .then((data)=>{
+            const tempRoom = Rooms;
+            tempRoom.push("test");
+        })
+        .set({
+            Rooms:tempRoom
+        })
 
+    }
+
+    
     return (
         
         <View>
             {
-                chatRooms.map((room) => {
+                chatRooms.map((room,index) => {
                     console.log(room);
-                    return <TouchableOpacity onPress={() => { props.navigation.navigate("Chat", { uid, roomId: room.id }) }}>
+                    return <TouchableOpacity key = {index} onPress={() => { props.navigation.navigate("Chat", { uid, roomId: room.id }) }}>
                         <Text style={{ padding : 20, margin:20,textAlign: 'center'}}>{room.RoomName}</Text>
                     </TouchableOpacity>
                 })
             }
+            <TouchableOpacity onPress={()=>{createNewChatsDocument(),createNewDocumentInUser()}}>
+                <Text>Create New Chatroom</Text>
+            </TouchableOpacity>
         </View>
 
     )

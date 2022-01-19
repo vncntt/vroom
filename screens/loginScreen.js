@@ -16,7 +16,8 @@ const loginScreen = ({ navigation }) => {
                 var user = userCredential.user;
                 // ...
                 const uid = user.uid;
-                navigation.navigate('Chat List', {uid})
+                const username = userCredential.user.email.split("@")[0];
+                navigation.navigate('Chat List', {uid, username})
             })
             .catch((error) => {
                 var errorMessage = error.message;
