@@ -1,7 +1,7 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { View,StyleSheet } from 'react-native'
 import { Input, Button } from 'react-native-elements'
-import {auth} from '../firebase';
+import {auth, db} from '../firebase';
 
 const registerScreen = ({navigation}) => {
     
@@ -9,9 +9,20 @@ const registerScreen = ({navigation}) => {
     const [name,setName] = useState('');
     const [password, setPassword] = useState('');
     const [imageURL, setImageURL] = useState('');
+    const [uid, setUid] = useState('');
+    const [username, setUsername] = useState('');
     const register = ()=> {
         auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential,navigation) => {
+        .then((userCredential, navigation) => {
+            console.log(userCredential.user.uid)
+            db
+            .collection('user_Chatroom')
+            .doc(userCredential.user.uid)
+            .set({
+                Rooms:[]
+            })
+        setUid(userCredential.user.id);
+        setUsername(userCredential.user.email.split("@")[0]);
         var user = userCredential.user;
         user.updateProfile({
             displayName: name,
@@ -29,7 +40,7 @@ const registerScreen = ({navigation}) => {
         },
 
         );
-        navigation.navigate('Chat')
+        navigation.navigate('Chat List', {uid, username})
         
     }
 
