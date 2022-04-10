@@ -1,1 +1,1 @@
-Voice-messaging based chatroom
+Voice-messaging based chatroom utilizing Firebase
